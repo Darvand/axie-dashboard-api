@@ -5,6 +5,7 @@ import { TypeORMExceptionFilter } from './filters/typeorm-exceptions.filter';
 
 async function bootstrap() {
   const app = await NestFactory.create(AppModule);
+  app.enableCors();
   app.useGlobalFilters(new TypeORMExceptionFilter());
   const options = new DocumentBuilder()
     .setTitle('Axie Dashboard API')

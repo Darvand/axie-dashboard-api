@@ -17,6 +17,10 @@ export class CriptocurrenciesRepository {
   }
 
   getLastCriptocurrencies() {
-    return this.repository.findOne();
+    return this.repository.findOne({ order: { createAt: 'DESC' } });
+  }
+
+  insertCriptocurrencies(criptocurrencies: CriptocurrenciesEntity) {
+    return this.repository.save(criptocurrencies);
   }
 }

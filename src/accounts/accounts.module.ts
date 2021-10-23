@@ -15,6 +15,8 @@ import { CriptocurrenciesMapper } from './mappers/criptocurrencies.mapper';
 import { CriptocurrenciesService } from './services/criptocurrencies.service';
 import { CriptocurrenciesRepository } from './repositories/criptocurrencies.repository';
 import { CriptocurrenciesEntity } from './entities/criptocurrencies.entity';
+import { AccountTask } from './accounts.task';
+import { CoinMarketApiService } from './services/coin-market-api.service';
 
 @Module({
   imports: [
@@ -37,6 +39,8 @@ import { CriptocurrenciesEntity } from './entities/criptocurrencies.entity';
     CriptocurrenciesMapper,
     CriptocurrenciesService,
     CriptocurrenciesRepository,
+    AccountTask,
+    CoinMarketApiService,
   ],
 })
 export class AccountsModule {}
