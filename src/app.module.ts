@@ -27,6 +27,7 @@ import { ScheduleModule } from '@nestjs/schedule';
         },
         autoLoadEntities: true,
         keepConnectionAlive: true,
+        ssl: { rejectUnauthorized: false },
       }),
       inject: [ConfigService],
     }),
