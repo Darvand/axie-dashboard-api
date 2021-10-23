@@ -35,3 +35,7 @@ lerna-debug.log*
 
 # Scripts
 /scripts
+
+# env
+/*.env
+*.env
