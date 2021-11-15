@@ -1,6 +1,7 @@
 import { Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Repository } from 'typeorm';
+import { AccountCreateDTO } from '../dtos/account-create.dto';
 import { AccountDailyEntity } from '../entities/accounts-daily.entity';
 import { AccountEntity } from '../entities/accounts.entity';
 import { AccountMapper } from '../mappers/accounts.mapper';
@@ -19,5 +20,13 @@ export class AccountsRepository {
 
   getAccountByAddress(address: string) {
     return this.repository.findOne({ where: { roninAddress: address } });
+  }
+
+  updateAccount(account: AccountEntity) {
+    return this.repository.update({ id: account.id }, account);
+  }
+
+  create(account: AccountCreateDTO) {
+    return this.repository.save(account);
   }
 }

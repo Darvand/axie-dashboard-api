@@ -5,6 +5,7 @@ import { AppService } from './app.service';
 import { AccountsModule } from './accounts/accounts.module';
 import { TypeOrmModule } from '@nestjs/typeorm';
 import { ScheduleModule } from '@nestjs/schedule';
+import { ScholarsModule } from './scholars/scholars.module';
 
 @Module({
   imports: [
@@ -27,12 +28,13 @@ import { ScheduleModule } from '@nestjs/schedule';
         },
         autoLoadEntities: true,
         keepConnectionAlive: true,
-        ssl: { rejectUnauthorized: false },
+        // ssl: { rejectUnauthorized: false },
       }),
       inject: [ConfigService],
     }),
     AccountsModule,
     ScheduleModule.forRoot(),
+    ScholarsModule,
   ],
   controllers: [AppController],
   providers: [AppService],

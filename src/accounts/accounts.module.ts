@@ -1,7 +1,7 @@
 import { Module } from '@nestjs/common';
 import { HttpModule } from '@nestjs/axios';
 import { TypeOrmModule } from '@nestjs/typeorm';
-import { AccountsController } from './accounts.controller';
+import { AccountsController } from './controllers/accounts.controller';
 import { AccountDailyEntity } from './entities/accounts-daily.entity';
 import { AccountDailyMapper } from './mappers/accounts-daily.mapper';
 import { AccountsDailyRepository } from './repositories/accounts-daily.repository';
@@ -17,6 +17,8 @@ import { CriptocurrenciesRepository } from './repositories/criptocurrencies.repo
 import { CriptocurrenciesEntity } from './entities/criptocurrencies.entity';
 import { AccountTask } from './accounts.task';
 import { CoinMarketApiService } from './services/coin-market-api.service';
+import { TrackerService } from './services/tracker.service';
+import { CoinController } from './controllers/coin.controller';
 
 @Module({
   imports: [
@@ -27,7 +29,7 @@ import { CoinMarketApiService } from './services/coin-market-api.service';
     ]),
     HttpModule,
   ],
-  controllers: [AccountsController],
+  controllers: [AccountsController, CoinController],
   providers: [
     AccountDailyMapper,
     AccountsDailyRepository,
@@ -41,6 +43,8 @@ import { CoinMarketApiService } from './services/coin-market-api.service';
     CriptocurrenciesRepository,
     AccountTask,
     CoinMarketApiService,
+    TrackerService,
   ],
+  exports: [AccountsService],
 })
 export class AccountsModule {}

@@ -14,5 +14,5 @@ module.exports = {
   },
   autoLoadEntities: true,
   keepConnectionAlive: true,
-  ssl: { rejectUnauthorized: false },
+  // ssl: { rejectUnauthorized: false },
 };

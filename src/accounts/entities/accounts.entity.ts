@@ -1,8 +1,11 @@
+import { ScholarEntity } from 'src/scholars/scholars.entity';
 import {
   Column,
   CreateDateColumn,
   Entity,
+  JoinColumn,
   OneToMany,
+  OneToOne,
   PrimaryGeneratedColumn,
   UpdateDateColumn,
 } from 'typeorm';
@@ -11,15 +14,43 @@ import { AccountDailyEntity } from './accounts-daily.entity';
 @Entity('accounts')
 export class AccountEntity {
   @PrimaryGeneratedColumn('uuid')
-  readonly id: string;
+  id: string;
 
   @Column({ unique: true, name: 'ronin_address' })
-  readonly roninAddress: string;
+  roninAddress: string;
 
   @OneToMany(() => AccountDailyEntity, (accountDaily) => accountDaily.account, {
     nullable: false,
   })
-  readonly accountDaily: AccountDailyEntity[];
+  accountDaily: AccountDailyEntity[];
+
+  @Column({ name: 'ronin_slp', default: 0 })
+  roninSLP: number;
+
+  @Column({ name: 'in_game_slp', default: 0 })
+  inGameSLP: number;
+
+  @Column({ name: 'total_slp', default: 0 })
+  totalSLP: number;
+
+  @Column({ name: 'lifetime_slp', default: 0 })
+  lifetimeSLP: number;
+
+  @Column({ default: 0 })
+  mmr: number;
+
+  @Column({ default: 0 })
+  rank: number;
+
+  @Column({ name: 'last_claim', default: 0 })
+  lastClaim: number;
+
+  @Column({ name: 'next_claim', default: 0 })
+  nextClaim: number;
+
+  @OneToOne(() => ScholarEntity, (scholar) => scholar.account)
+  @JoinColumn()
+  scholar: ScholarEntity;
 
   @CreateDateColumn({
     name: 'create_at',
@@ -35,9 +66,27 @@ export class AccountEntity {
   })
   updateAt: Date;
 
-  constructor(id: string, roninAddress: string) {
+  constructor(
+    id: string,
+    roninAddress: string,
+    roninSLP: number,
+    inGameSLP: number,
+    totalSLP: number,
+    lifetimeSLP: number,
+    mmr: number,
+    rank: number,
+    lastClaim: number,
+    nextClaim: number,
+  ) {
     this.id = id;
     this.roninAddress = roninAddress;
-    console.log(`Account ${roninAddress} created`);
+    this.roninSLP = roninSLP;
+    this.inGameSLP = inGameSLP;
+    this.totalSLP = totalSLP;
+    this.lifetimeSLP = lifetimeSLP;
+    this.mmr = mmr;
+    this.rank = rank;
+    this.lastClaim = lastClaim;
+    this.nextClaim = nextClaim;
   }
 }

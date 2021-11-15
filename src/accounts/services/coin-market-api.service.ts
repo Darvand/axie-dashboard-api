@@ -1,6 +1,6 @@
 import { HttpService } from '@nestjs/axios';
 import { HttpException, HttpStatus, Injectable, Logger } from '@nestjs/common';
-import { lastValueFrom, map, Observable, tap } from 'rxjs';
+import { lastValueFrom } from 'rxjs';
 import { COINMARKET_SLP_ID } from '../constants';
 import { CoinMarketPriceResponse } from '../types/coinmarket-price-response.type';
 
