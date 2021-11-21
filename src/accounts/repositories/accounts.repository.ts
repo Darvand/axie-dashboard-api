@@ -2,7 +2,6 @@ import { Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Repository } from 'typeorm';
 import { AccountCreateDTO } from '../dtos/account-create.dto';
-import { AccountDailyEntity } from '../entities/accounts-daily.entity';
 import { AccountEntity } from '../entities/accounts.entity';
 import { AccountMapper } from '../mappers/accounts.mapper';
 
@@ -15,7 +14,7 @@ export class AccountsRepository {
   ) {}
 
   getAllAccounts(): Promise<AccountEntity[]> {
-    return this.repository.find({ relations: ['accountDaily'] });
+    return this.repository.find({ relations: ['accountDaily', 'scholar'] });
   }
 
   getAccountByAddress(address: string) {

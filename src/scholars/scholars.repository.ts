@@ -26,6 +26,15 @@ export class ScholarsRepository {
     return scholar;
   }
 
+  async getByRoninAddress(ronin: ScholarEntity['paymentRoninAddress']) {
+    this.logger.debug(`Looking for scholar with ronin ${ronin}`);
+    const scholar = await this.repository.findOne({
+      where: { paymentRoninAddress: ronin },
+    });
+    this.logger.debug(`Scholar ${!scholar && 'not '}found`);
+    return scholar;
+  }
+
   async save(scholar: ScholarEntity) {
     this.logger.debug(`Attempting to save scholar with name ${scholar.name}`);
     const saved = await this.repository.save(scholar);

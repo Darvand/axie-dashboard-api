@@ -1,8 +1,10 @@
 import { AccountEntity } from 'src/accounts/entities/accounts.entity';
+import { PaymentEntity } from 'src/payments/payments.entity';
 import {
   Column,
   CreateDateColumn,
   Entity,
+  OneToMany,
   OneToOne,
   PrimaryGeneratedColumn,
   UpdateDateColumn,
@@ -17,6 +19,9 @@ export class ScholarEntity {
     nullable: false,
   })
   account: AccountEntity;
+
+  @OneToMany(() => PaymentEntity, (payment) => payment.scholarAccount)
+  payments: PaymentEntity[];
 
   @Column({ unique: true })
   name: string;

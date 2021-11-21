@@ -45,6 +45,6 @@ import { CoinController } from './controllers/coin.controller';
     CoinMarketApiService,
     TrackerService,
   ],
-  exports: [AccountsService],
+  exports: [AccountsService, AccountsDailyService],
 })
 export class AccountsModule {}

@@ -10,7 +10,11 @@ export class ScholarsMapper {
     account: AccountEntity,
   ) {
     const scholarEntity = new ScholarEntity();
-    scholarEntity.paymentRoninAddress = createScholarDTO.paymentRoninAddress;
+    const fixedAddress = createScholarDTO.payment_ronin_address.replace(
+      'ronin:',
+      '0x',
+    );
+    scholarEntity.paymentRoninAddress = fixedAddress;
     scholarEntity.name = createScholarDTO.name;
     scholarEntity.account = account;
     return scholarEntity;

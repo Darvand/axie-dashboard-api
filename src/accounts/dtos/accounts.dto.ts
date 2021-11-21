@@ -1,4 +1,5 @@
 import { ApiProperty } from '@nestjs/swagger';
+import { ScholarDTO } from 'src/scholars/dtos/scholar.dto';
 import { AccountDailyDTO } from './accounts-daily.dto';
 
 export class AccountDTO {
@@ -10,6 +11,9 @@ export class AccountDTO {
 
   @ApiProperty()
   readonly accountDaily: AccountDailyDTO[];
+
+  @ApiProperty()
+  readonly scholar: ScholarDTO;
 
   @ApiProperty()
   roninSLP: number;

@@ -11,5 +11,6 @@ import { ScholarsService } from './scholars.service';
   imports: [TypeOrmModule.forFeature([ScholarEntity]), AccountsModule],
   controllers: [ScholarsController],
   providers: [ScholarsService, ScholarsRepository, ScholarsMapper],
+  exports: [ScholarsService],
 })
 export class ScholarsModule {}

@@ -1,3 +1,4 @@
+import { PaymentEntity } from 'src/payments/payments.entity';
 import { ScholarEntity } from 'src/scholars/scholars.entity';
 import {
   Column,
@@ -51,6 +52,9 @@ export class AccountEntity {
   @OneToOne(() => ScholarEntity, (scholar) => scholar.account)
   @JoinColumn()
   scholar: ScholarEntity;
+
+  @OneToMany(() => PaymentEntity, (payment) => payment.managerAccount)
+  payments: PaymentEntity[];
 
   @CreateDateColumn({
     name: 'create_at',

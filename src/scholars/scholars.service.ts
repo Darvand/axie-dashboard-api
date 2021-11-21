@@ -22,6 +22,11 @@ export class ScholarsService {
     return this.repository.getById(id);
   }
 
+  getByRonin(ronin: ScholarEntity['paymentRoninAddress']) {
+    const fixedAddress = ronin.replace('ronin:', '0x');
+    return this.repository.getByRoninAddress(fixedAddress);
+  }
+
   save(createScholarDTO: CreateScholarDTO, account: AccountEntity) {
     const scholar = this.mapper.createScholarEntityFromDTO(
       createScholarDTO,

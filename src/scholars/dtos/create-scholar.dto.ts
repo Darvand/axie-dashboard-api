@@ -4,21 +4,21 @@ import { ScholarEntity } from '../scholars.entity';
 
 export class CreateScholarDTO {
   @ApiProperty({ nullable: true })
-  readonly paymentRoninAddress: ScholarEntity['paymentRoninAddress'];
+  readonly payment_ronin_address: ScholarEntity['paymentRoninAddress'];
 
   @ApiProperty()
-  readonly mainAccountAddress: AccountEntity['roninAddress'];
+  readonly main_account_address: AccountEntity['roninAddress'];
 
   @ApiProperty()
   readonly name: ScholarEntity['name'];
 
   constructor(
-    paymentRoninAddress: CreateScholarDTO['paymentRoninAddress'],
-    mainAccountAddress: CreateScholarDTO['mainAccountAddress'],
+    paymentRoninAddress: CreateScholarDTO['payment_ronin_address'],
+    mainAccountAddress: CreateScholarDTO['main_account_address'],
     name: CreateScholarDTO['name'],
   ) {
-    this.paymentRoninAddress = paymentRoninAddress;
-    this.mainAccountAddress = mainAccountAddress;
+    this.payment_ronin_address = paymentRoninAddress;
+    this.main_account_address = mainAccountAddress;
     this.name = name;
   }
 }

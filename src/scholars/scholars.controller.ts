@@ -18,8 +18,9 @@ export class ScholarsController {
   @Post()
   async save(@Body() createScholarDTO: CreateScholarDTO) {
     const account = await this.accountsService.getAccountByAddress(
-      createScholarDTO.mainAccountAddress,
+      createScholarDTO.main_account_address,
     );
-    return this.scholarsService.save(createScholarDTO, account);
+    const scholar = await this.scholarsService.save(createScholarDTO, account);
+    return this.accountsService.updateAccount({ ...account, scholar });
   }
 }

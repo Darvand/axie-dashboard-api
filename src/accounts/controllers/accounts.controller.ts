@@ -1,4 +1,11 @@
-import { Controller, Get, Param, Post } from '@nestjs/common';
+import {
+  ConflictException,
+  Controller,
+  Get,
+  HttpStatus,
+  Param,
+  Post,
+} from '@nestjs/common';
 import { AccountTask } from '../accounts.task';
 import { AccountsDailyService } from '../services/accounts-daily.service';
 import { AccountsService } from '../services/accounts.service';
@@ -33,7 +40,9 @@ export class AccountsController {
     const roninResponse = await this.axieService.getTodaySLP(ronin);
     const previous = await this.accountsService.getAccountByAddress(ronin);
     if (previous) {
-      return previous;
+      throw new ConflictException(
+        `Account whit address ${ronin} already exists`,
+      );
     }
     const account = await this.accountsService.create(ronin, roninResponse);
     const tracker = await this.trackerService.getDaily(ronin);

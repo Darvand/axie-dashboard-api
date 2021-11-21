@@ -6,6 +6,7 @@ import { AccountsModule } from './accounts/accounts.module';
 import { TypeOrmModule } from '@nestjs/typeorm';
 import { ScheduleModule } from '@nestjs/schedule';
 import { ScholarsModule } from './scholars/scholars.module';
+import { PaymentsModule } from './payments/payments.module';
 
 @Module({
   imports: [
@@ -35,6 +36,7 @@ import { ScholarsModule } from './scholars/scholars.module';
     AccountsModule,
     ScheduleModule.forRoot(),
     ScholarsModule,
+    PaymentsModule,
   ],
   controllers: [AppController],
   providers: [AppService],

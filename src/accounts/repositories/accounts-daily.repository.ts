@@ -25,6 +25,10 @@ export class AccountsDailyRepository {
     return this.repository.save(accountDaily);
   }
 
+  saveMultipleDaily(accountDaily: AccountDailyEntity[]) {
+    return this.repository.save(accountDaily);
+  }
+
   getDailyByDate(date: DateTime, accountID: string) {
     const initialDate = date.set({ hour: 0, minute: 0, second: 0 });
     const finalDate = initialDate.plus({ days: 1, seconds: -1 });
