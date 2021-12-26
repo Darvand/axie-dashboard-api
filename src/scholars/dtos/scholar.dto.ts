@@ -9,4 +9,7 @@ export class ScholarDTO {
 
   @ApiProperty()
   readonly name: string;
+
+  @ApiProperty()
+  readonly entryDate: Date;
 }

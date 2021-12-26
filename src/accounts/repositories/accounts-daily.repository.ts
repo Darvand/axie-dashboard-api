@@ -29,7 +29,7 @@ export class AccountsDailyRepository {
     return this.repository.save(accountDaily);
   }
 
-  getDailyByDate(date: DateTime, accountID: string) {
+  getDailyByDateAndAccount(date: DateTime, accountID: string) {
     const initialDate = date.set({ hour: 0, minute: 0, second: 0 });
     const finalDate = initialDate.plus({ days: 1, seconds: -1 });
     return this.repository.findOne({
@@ -38,5 +38,21 @@ export class AccountsDailyRepository {
         account: { id: accountID },
       },
     });
+  }
+
+  getDailyByDate(date: DateTime) {
+    const initialDate = date.set({ hour: 0, minute: 0, second: 0 });
+    const finalDate = initialDate.plus({ days: 1, seconds: -1 });
+    return this.repository.find({
+      where: { date: Between(initialDate.toISODate(), finalDate.toISODate()) },
+    });
+  }
+
+  getById(id: AccountDailyEntity['id']) {
+    return this.repository.findOne(id);
+  }
+
+  update(daily: AccountDailyEntity) {
+    return this.repository.save(daily);
   }
 }

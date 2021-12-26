@@ -1,4 +1,3 @@
-import { DateTime } from 'luxon';
 import {
   Column,
   CreateDateColumn,
@@ -33,6 +32,21 @@ export class AccountDailyEntity {
   @Column({ default: () => 'CURRENT_TIMESTAMP', type: 'timestamp' })
   date: Date;
 
+  @Column({ default: 0 })
+  rank: number;
+
+  @Column({ default: 0 })
+  mmr: number;
+
+  @Column({ name: 'ronin_slp', default: 0 })
+  roninSLP: number;
+
+  @Column({ name: 'in_game_slp', default: 0 })
+  inGameSLP: number;
+
+  @Column({ name: 'lifetime_slp', default: 0 })
+  lifetimeSLP: number;
+
   @ManyToOne(() => AccountEntity, (account) => account.accountDaily, {
     nullable: false,
   })
@@ -53,17 +67,10 @@ export class AccountDailyEntity {
   })
   updateAt: Date;
 
-  constructor(
-    pvpWin: number,
-    pvpLose: number,
-    pvpDraw: number,
-    dayMMR: number,
-    daySLP: number,
-    date: Date,
-  ) {
-    this.pvpWin = pvpWin;
-    this.pvpLose = pvpLose;
-    this.pvpDraw = pvpDraw;
+  constructor(dayMMR: number, daySLP: number, date: Date) {
+    this.pvpWin = 0;
+    this.pvpLose = 0;
+    this.pvpDraw = 0;
     this.dayMMR = dayMMR;
     this.daySLP = daySLP;
     this.date = date;

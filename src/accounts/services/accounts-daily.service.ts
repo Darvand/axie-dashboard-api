@@ -12,6 +12,7 @@ import { inspect } from 'util';
 import { TrackerDailyResponse } from '../types/tracker-response.type';
 import { AccountDailyMapper } from '../mappers/accounts-daily.mapper';
 import { PvpFightsResponse } from '../types/fights-response.type';
+import { PutDailyDTO } from '../dtos/put-daily.dto';
 
 export interface BattleState {
   win: number;
@@ -65,10 +66,6 @@ export class AccountsDailyService {
     return this.repository.getAllDailyForAccount(account);
   }
 
-  save(daily: AccountDailyEntity) {
-    return this.repository.saveDaily(daily);
-  }
-
   createByTracker(account: AccountEntity, { daily }: TrackerDailyResponse) {
     const createDailyEntity = this.mapper.createEntityByDailyInfo(account);
     const withoutToday = daily.slice(0, daily.length - 1);
@@ -99,8 +96,8 @@ export class AccountsDailyService {
 
   async createDailyInformation(accountDTO: AccountDTO) {
     const account = this.accountMapper.dtoToEntity(accountDTO);
-    const yesterday = DateTime.utc().minus({ days: 1 });
-    const dailyCreated = await this.repository.getDailyByDate(
+    const yesterday = DateTime.utc();
+    const dailyCreated = await this.repository.getDailyByDateAndAccount(
       yesterday,
       accountDTO.id,
     );
@@ -115,50 +112,62 @@ export class AccountsDailyService {
         account.roninAddress
       } on day ${yesterday.toISO()}`,
     );
-    return Promise.all([
-      this.axieApi.getTodaySLP(account.roninAddress),
-      this.axieApi.getLast20PVP(account.roninAddress),
-      this.axieApi.getMMR(account.roninAddress),
-    ]).then(([slpResponse, [pvpFights], [mmr]]) => {
-      this.logger.debug(`Today data for account: ${inspect(slpResponse)}`);
-      this.logger.debug(`Current account data: ${inspect(account)}`);
-      const fixedRonin = account.roninAddress.replace('ronin:', '0x');
-      const yesterdayPVPFights = this.calculateFights(
-        pvpFights,
-        yesterday,
-        fixedRonin,
-      );
-      const currentMMR = mmr.items.find(
-        (account) => account.client_id === fixedRonin,
-      ).elo;
-      const accountDaily = new AccountDailyEntity(
-        yesterdayPVPFights.win,
-        yesterdayPVPFights.lose,
-        yesterdayPVPFights.draw,
-        account.mmr === 0 ? 0 : currentMMR - account.mmr,
-        account.lifetimeSLP === 0
-          ? 0
-          : slpResponse.lifetime_slp - account.lifetimeSLP,
-        yesterday.toJSDate(),
-      );
-      accountDaily.account = account;
-      const updatedAccount = new AccountEntity(
-        account.id,
-        account.roninAddress,
-        slpResponse.ronin_slp,
-        slpResponse.in_game_slp,
-        slpResponse.total_slp,
-        slpResponse.lifetime_slp,
-        currentMMR,
-        slpResponse.rank,
-        slpResponse.last_claim,
-        slpResponse.next_claim,
-      );
-      updatedAccount.id = account.id;
-      return Promise.all([
-        this.repository.saveDaily(accountDaily),
-        this.accountsService.updateAccount(updatedAccount),
-      ]);
-    });
+    return this.axieApi
+      .getTodaySLP(account.roninAddress)
+      .then((slpResponse) => {
+        this.logger.debug(`Today data for account: ${inspect(slpResponse)}`);
+        this.logger.debug(`Current account data: ${inspect(account)}`);
+        let daySLP = slpResponse.in_game_slp - account.inGameSLP;
+        if (daySLP <= 0) {
+          this.logger.log(
+            `DaySLP = ${daySLP}. Re-calculating with lifetime SLP`,
+          );
+          daySLP = slpResponse.lifetime_slp - account.lifetimeSLP;
+        }
+        const accountDaily = this.mapper.createDaily(
+          daySLP,
+          yesterday.toJSDate(),
+          slpResponse,
+          account,
+        );
+        const updatedAccount = this.accountMapper.createAccount(
+          account,
+          slpResponse,
+        );
+        return Promise.all([
+          this.repository.saveDaily(accountDaily),
+          this.accountsService.updateAccount(updatedAccount),
+        ]);
+      });
+  }
+
+  getLastDaily() {
+    const yesterday = DateTime.utc().minus({ days: 1 });
+    return this.repository.getDailyByDate(yesterday);
+  }
+
+  getById(id: AccountDailyEntity['id']) {
+    return this.repository.getById(id);
+  }
+
+  async update(daily: PutDailyDTO) {
+    const data = await this.repository.getById(daily.id);
+    console.log('daily', daily);
+    const date = DateTime.fromISO(daily.date.toString()).plus({ hours: 12 });
+    const updateDaily: AccountDailyEntity = {
+      ...data,
+      ...daily,
+      date: date.toJSDate(),
+      inGameSLP:
+        daily.daySLP !== data.daySLP
+          ? data.inGameSLP + +daily.daySLP
+          : daily.inGameSLP,
+    };
+    return this.repository.update(updateDaily);
+  }
+
+  save(daily: PutDailyDTO, account: AccountEntity) {
+    const entity = this.mapper.saveDaily(daily, account);
+    return this.repository.saveDaily(entity);
   }
 }

@@ -2,7 +2,6 @@ import {
   ConflictException,
   Controller,
   Get,
-  HttpStatus,
   Param,
   Post,
 } from '@nestjs/common';
@@ -10,15 +9,12 @@ import { AccountTask } from '../accounts.task';
 import { AccountsDailyService } from '../services/accounts-daily.service';
 import { AccountsService } from '../services/accounts.service';
 import { AxieApiService } from '../services/axie-api.service';
-import { CoinMarketApiService } from '../services/coin-market-api.service';
 import { TrackerService } from '../services/tracker.service';
 
 @Controller('accounts')
 export class AccountsController {
   constructor(
-    private service: AccountsDailyService,
     private accountsService: AccountsService,
-    private coinMarketAPI: CoinMarketApiService,
     private taskService: AccountTask,
     private trackerService: TrackerService,
     private axieService: AxieApiService,
@@ -30,9 +26,15 @@ export class AccountsController {
     return this.accountsService.getAllAccounts();
   }
 
+  @Get('summary')
+  async getSummaryAccounts() {
+    const lastDaily = await this.dailyService.getLastDaily();
+    return this.accountsService.getSummaryAccounts(lastDaily);
+  }
+
   @Get(':roninAccount')
   getAllDailiesByRonin(@Param('roninAccount') ronin: string) {
-    return this.service.getAllDailyFromRonin(ronin);
+    return this.accountsService.getAccountByAddress(ronin);
   }
 
   @Post(':roninAddress')

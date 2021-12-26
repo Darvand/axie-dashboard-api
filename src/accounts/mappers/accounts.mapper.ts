@@ -1,6 +1,8 @@
 import { Injectable } from '@nestjs/common';
 import { AccountDTO } from '../dtos/accounts.dto';
+import { AccountDailyEntity } from '../entities/accounts-daily.entity';
 import { AccountEntity } from '../entities/accounts.entity';
+import { SLPResponse } from '../types/slp-response.type';
 
 @Injectable()
 export class AccountMapper {
@@ -32,5 +34,33 @@ export class AccountMapper {
       accountEntity.lastClaim,
       accountEntity.nextClaim,
     );
+  }
+
+  getYesterdaySummary(account: AccountEntity, daily: AccountDailyEntity) {
+    return {
+      yesterdaySLP: daily.daySLP,
+      inGameSLP: account.inGameSLP,
+      mmr: account.mmr,
+      yesterdayMMR: account.mmr + daily.dayMMR,
+      yesterdayMmrEffort: daily.dayMMR,
+      scholarship: account.scholar.name,
+    };
+  }
+
+  createAccount(account: AccountEntity, roninResponse: SLPResponse) {
+    const updatedAccount = new AccountEntity(
+      account.id,
+      account.roninAddress,
+      roninResponse.ronin_slp,
+      roninResponse.in_game_slp,
+      roninResponse.total_slp,
+      roninResponse.lifetime_slp,
+      roninResponse.mmr,
+      roninResponse.rank,
+      roninResponse.last_claim,
+      roninResponse.next_claim,
+    );
+    updatedAccount.id = account.id;
+    return updatedAccount;
   }
 }

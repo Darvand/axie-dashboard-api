@@ -19,6 +19,7 @@ import { AccountTask } from './accounts.task';
 import { CoinMarketApiService } from './services/coin-market-api.service';
 import { TrackerService } from './services/tracker.service';
 import { CoinController } from './controllers/coin.controller';
+import { DailyAccountsController } from './controllers/daily.controller';
 
 @Module({
   imports: [
@@ -29,7 +30,7 @@ import { CoinController } from './controllers/coin.controller';
     ]),
     HttpModule,
   ],
-  controllers: [AccountsController, CoinController],
+  controllers: [AccountsController, CoinController, DailyAccountsController],
   providers: [
     AccountDailyMapper,
     AccountsDailyRepository,

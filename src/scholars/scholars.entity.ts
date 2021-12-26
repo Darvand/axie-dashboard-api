@@ -29,6 +29,9 @@ export class ScholarEntity {
   @Column({ name: 'payment_ronin_address', nullable: true })
   paymentRoninAddress: string;
 
+  @Column({ name: 'entry_date', nullable: true })
+  entryDate: Date;
+
   @CreateDateColumn({
     name: 'create_at',
     type: 'timestamp',

@@ -19,4 +19,7 @@ export class PaymentDTO {
 
   @ApiProperty({ nullable: false })
   expectedTotalSLP: number;
+
+  @ApiProperty({ nullable: false })
+  expectedTotalSLPToPay: number;
 }
