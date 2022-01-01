@@ -70,26 +70,7 @@ export class AccountsDailyService {
     const createDailyEntity = this.mapper.createEntityByDailyInfo(account);
     const withoutToday = daily.slice(0, daily.length - 1);
     const allDaily = withoutToday.map((data, index) => {
-      const { slp: nextSLP } = daily[index + 1];
-      let slp = nextSLP.total - data.slp.total;
-      if (slp < 0) {
-        slp += data.slp.claimableTotal - nextSLP.claimableTotal;
-      }
-      if (slp < 0 || slp > 500) {
-        this.logger.error(
-          `Calculated ${slp} SLP between: 
-          ${inspect(daily[index - 1].slp)}
-          ${inspect(data.slp)}
-          ${inspect(daily[index + 1].slp)}`,
-        );
-        throw new HttpException(
-          `Error calculating SLP on date ${data.date}`,
-          HttpStatus.BAD_REQUEST,
-        );
-      }
-      const date = DateTime.fromISO(data.date).plus({ days: 1 });
-      this.logger.debug(`[${date.toISODate()}]: SLP = ${slp}`);
-      return createDailyEntity(slp, date.toISODate());
+      return createDailyEntity(data, daily[index + 1]);
     });
     return this.repository.saveMultipleDaily(allDaily);
   }

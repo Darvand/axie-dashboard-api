@@ -1,13 +1,17 @@
-import { Injectable } from '@nestjs/common';
+import { BadRequestException, Injectable, Logger } from '@nestjs/common';
 import { DateTime } from 'luxon';
+import { inspect } from 'util';
 import { AccountDailyDTO } from '../dtos/accounts-daily.dto';
 import { PutDailyDTO } from '../dtos/put-daily.dto';
 import { AccountDailyEntity } from '../entities/accounts-daily.entity';
 import { AccountEntity } from '../entities/accounts.entity';
 import { SLPResponse } from '../types/slp-response.type';
+import { Daily } from '../types/tracker-response.type';
 
 @Injectable()
 export class AccountDailyMapper {
+  private readonly logger = new Logger(AccountDailyMapper.name);
+
   dtoToEntity(accountDailyDTO: AccountDailyDTO): AccountDailyEntity {
     return new AccountDailyEntity(
       accountDailyDTO.dayMMR,
@@ -29,12 +33,29 @@ export class AccountDailyMapper {
   }
 
   createEntityByDailyInfo(account: AccountEntity) {
-    return (slp: number, date: string) => {
-      const dailyEntity = new AccountDailyEntity(
-        0,
-        slp,
-        DateTime.fromFormat(date, 'yyyy-MM-dd').toJSDate(),
-      );
+    let totalSLP = 0;
+    return (beforeTracked: Daily, afterTracked: Daily) => {
+      const { slp: nextSLP } = afterTracked;
+      let slp = nextSLP.total - beforeTracked.slp.total;
+      if (slp < 0) {
+        slp += beforeTracked.slp.claimableTotal - nextSLP.claimableTotal;
+      }
+      if (slp < 0 || slp > 500) {
+        this.logger.error(
+          `Calculated ${slp} SLP between: 
+          ${inspect(afterTracked.slp)}
+          ${inspect(beforeTracked.slp)}
+          ${inspect(afterTracked.slp)}`,
+        );
+        throw new BadRequestException(
+          `Error calculating SLP on date ${beforeTracked.date}`,
+        );
+      }
+      const date = DateTime.fromISO(beforeTracked.date).plus({ days: 1 });
+      this.logger.debug(`[${date.toISODate()}]: SLP = ${slp}`);
+      const dailyEntity = new AccountDailyEntity(0, slp, date.toJSDate());
+      totalSLP += slp;
+      dailyEntity.inGameSLP = totalSLP;
       dailyEntity.account = account;
       return dailyEntity;
     };
